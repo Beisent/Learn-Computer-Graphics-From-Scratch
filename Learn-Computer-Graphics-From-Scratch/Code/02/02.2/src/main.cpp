@@ -39,25 +39,23 @@ bool Render(std::string filename)
     return true;
 }
 
-void BresenhamLine(int x0, int y0, int x1, int y1, int R, int G, int B)
+void DrawLine(int x1, int y1, int xn, int yn, int r, int g, int b)
 {
-    int dx = x1 - x0;
-    int dy = y1 - y0;
-
-    int d = 2 * dy - dx;   
-    int y = y0;
-
-    for (int x = x0; x <= x1; x++)
+    double k = 1.0 * (yn - y1) / (xn - x1);
+    int xi = x1;
+    int yi = y1;
+    double delta = 0;
+    SetPixel(x1, y1, r, g, b);
+    while (xi != xn)
     {
-        SetPixel(x, y, R, G, B);
-
-        if (d > 0)
+        xi += 1;
+        delta += k;
+        if (delta >= 0.5) // 直接比较delta与0.5
         {
-            y += 1;
-            d -= 2 * dx;
+            yi += 1;
+            delta -= 1.0; // 更新delta，而非middle
         }
-
-        d += 2 * dy;
+        SetPixel(xi, yi, r, g, b);
     }
 }
 int main()
@@ -67,10 +65,10 @@ int main()
     {
         for (int x = 0; x < width; ++x)
         {
-            SetPixel(x, y, 0, 0, 0);
+            SetPixel(x, y, 255, 255, 255);
         }
     }
-    BresenhamLine(0, 0, 100, 49, 255, 0, 0);
+    DrawLine(10, 10, 200, 100, 0, 0, 0);
     Render("output.ppm");
 
     delete[] r;
